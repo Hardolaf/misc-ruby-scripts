@@ -1,0 +1,56 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'dotenv'
+require 'pony'
+
+Dotenv.load
+
+info = %w{Email Address Name}
+info.each do |i|
+  puts "#{i}: "
+  eval "@#{i.downcase}=\"#{gets.chomp}\""
+end
+
+@html_body = %Q{
+Hi #{@name},
+<br><br>
+My name is Mark Tareshawty, I’m a summer intern for Shopify looking for a place to live and I came across your listing.
+<br><br>
+Just a little about me, I am Computer Science and Engineering Student at The Ohio State University in the United States. I’m pretty easy going, and I really enjoy meeting new people.
+<br><br>
+Is the room still available? If so can you send some more pictures?
+<br>
+Thanks,
+<br>
+Mark}
+
+@body = %Q{
+Hi #{@name},\n\n
+
+My name is Mark Tareshawty, I’m a summer intern for Shopify looking for a place to live and I came across your listing.\n\n
+
+Just a little about me, I am Computer Science and Engineering Student at The Ohio State University in the United States. I’m pretty easy going, and I really enjoy meeting new people.\n\n
+
+Is the room still available? If so can you send some more pictures?\n\n
+
+Thanks,\n
+Mark}
+
+Pony.mail({
+  :to => @email,
+  :from => ENV["GMAIL_USERNAME"],
+  :subject => "Concerning #{@address} sublease",
+  :html_body => @html_body,
+  :body => @body,
+  :charset => "UTF-8",
+  :via => :smtp,
+  :via_options => {
+    :address              => 'smtp.gmail.com',
+    :port                 => '587',
+    :enable_starttls_auto => true,
+    :user_name            => ENV["GMAIL_USERNAME"],
+    :password             => ENV["GMAIL_PASSWORD"],
+    :authentication       => :login,
+    :domain               => "localhost.localdomain"
+  }
+})
